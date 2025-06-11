@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import bellIcon from '../../assets/images/notification.png';
+import searchIcon from '../../assets/images/search.png';
 import { PRODUCTS } from '../../data/product';
 
 // Header Component
@@ -55,9 +56,10 @@ export default function HomeScreen() {
       <Header />
 
       <ScrollView style={styles.content}>
-        <View style={styles.searchContainer}>
-          <Text style={styles.searchPlaceholder}>🔍 Search...</Text>
-        </View>
+      <View style={styles.searchContainer}>
+        <Image source={searchIcon} style={styles.searchIcon} />
+        <Text style={styles.searchPlaceholder}>Search...</Text>
+      </View>
 
         <Text style={styles.categoryTitle}>Technology</Text>
         <Text style={styles.categorySubtitle}>Smartphones, Laptops & Accessories</Text>
@@ -95,8 +97,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   logoContainer: {
-    flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   logo: {
     fontSize: 16,
@@ -142,6 +143,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     marginVertical: 16,
+    flexDirection: 'row',
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
   },
   searchPlaceholder: {
     color: '#999',

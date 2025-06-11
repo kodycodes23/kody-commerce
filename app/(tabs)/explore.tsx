@@ -1,14 +1,15 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
   Image,
   SafeAreaView,
+  ScrollView,
   StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import bellIcon from '../../assets/images/notification.png';
 import { useCart } from '../../context/CartContext';
 
 // Header Component
@@ -19,7 +20,11 @@ const Header = () => (
         <Text style={styles.logo}>Full Logo</Text>
       </View>
       <TouchableOpacity style={styles.notificationButton}>
-        <Text style={styles.notificationIcon}>🔔</Text>
+        <Image
+          source={bellIcon}
+          style={styles.notificationIcon}
+          resizeMode="contain"
+          />
       </TouchableOpacity>
     </View>
     <Text style={styles.deliveryAddress}>DELIVERY ADDRESS</Text>
@@ -134,8 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   logoContainer: {
-    flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   logo: {
     fontSize: 16,
@@ -156,7 +160,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   notificationIcon: {
-    fontSize: 20,
+    width: 20,
+    height: 20
   },
   deliveryAddress: {
     fontSize: 12,
