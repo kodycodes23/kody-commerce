@@ -1,110 +1,325 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  SafeAreaView,
+  StatusBar,
+} from 'react-native';
+import { useCart } from '../../context/CartContext';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+// Header Component
+const Header = () => (
+  <View style={styles.header}>
+    <View style={styles.headerContent}>
+      <View style={styles.logoContainer}>
+        <Text style={styles.logo}>Full Logo</Text>
+      </View>
+      <TouchableOpacity style={styles.notificationButton}>
+        <Text style={styles.notificationIcon}>🔔</Text>
+      </TouchableOpacity>
+    </View>
+    <Text style={styles.deliveryAddress}>DELIVERY ADDRESS</Text>
+    <Text style={styles.address}>Umuezike Road, Oyo State</Text>
+  </View>
+);
 
-export default function TabTwoScreen() {
+// Cart Item Component
+const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => (
+  <View style={styles.cartItem}>
+    <Image source={{ uri: item.image }} style={styles.cartItemImage} />
+    <View style={styles.cartItemInfo}>
+      <Text style={styles.cartItemName}>{item.name}</Text>
+      <Text style={styles.cartItemPrice}>${item.price.toFixed(2)}</Text>
+      <Text style={styles.stockStatus}>In stock</Text>
+    </View>
+    <View style={styles.cartItemActions}>
+      <View style={styles.quantityContainer}>
+        <TouchableOpacity onPress={onDecrease} style={styles.quantityButton}>
+          <Text style={styles.quantityButtonText}>−</Text>
+        </TouchableOpacity>
+        <Text style={styles.quantity}>{item.quantity}</Text>
+        <TouchableOpacity onPress={onIncrease} style={styles.quantityButton}>
+          <Text style={styles.quantityButtonText}>+</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity onPress={onRemove} style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>🗑</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
+export default function CartScreen() {
+  const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
+
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = cartItems.length > 0 ? 10 : 0;
+  const total = subtotal + shipping;
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <Header />
+
+      <ScrollView style={styles.content}>
+        <Text style={styles.cartTitle}>Your Cart</Text>
+
+        {cartItems.length === 0 ? (
+          <View style={styles.emptyCart}>
+            <Text style={styles.emptyCartText}>Your cart is empty</Text>
+          </View>
+        ) : (
+          <>
+            {cartItems.map((item) => (
+              <CartItem
+                key={item.id}
+                item={item}
+                onIncrease={() => increaseQuantity(item.id)}
+                onDecrease={() => decreaseQuantity(item.id)}
+                onRemove={() => removeFromCart(item.id)}
+              />
+            ))}
+
+            <View style={styles.orderInfo}>
+              <Text style={styles.orderInfoTitle}>Order Info</Text>
+
+              <View style={styles.orderRow}>
+                <Text style={styles.orderLabel}>Subtotal</Text>
+                <Text style={styles.orderValue}>${subtotal.toFixed(2)}</Text>
+              </View>
+
+              <View style={styles.orderRow}>
+                <Text style={styles.orderLabel}>Shipping</Text>
+                <Text style={styles.orderValue}>${shipping.toFixed(2)}</Text>
+              </View>
+
+              <View style={styles.orderRow}>
+                <Text style={styles.orderLabelBold}>Total</Text>
+                <Text style={styles.orderValueBold}>${total.toFixed(2)}</Text>
+              </View>
+            </View>
+          </>
+        )}
+      </ScrollView>
+
+      {cartItems.length > 0 && (
+        <TouchableOpacity style={styles.checkoutButton}>
+          <Text style={styles.checkoutText}>Checkout (${total.toFixed(2)})</Text>
+        </TouchableOpacity>
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
   },
-  titleContainer: {
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  headerContent: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  logoContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  logo: {
+    fontSize: 16,
+    color: '#4A90E2',
+    fontWeight: '600',
+    backgroundColor: '#E8F4FF',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 4,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: '#4A90E2',
+  },
+  notificationButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationIcon: {
+    fontSize: 20,
+  },
+  deliveryAddress: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  address: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  cartTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginVertical: 20,
+  },
+  emptyCart: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+  },
+  emptyCartText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  cartItem: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cartItemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  cartItemInfo: {
+    flex: 1,
+  },
+  cartItemName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
+  },
+  cartItemPrice: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  stockStatus: {
+    fontSize: 12,
+    color: '#00B894',
+    fontWeight: '500',
+  },
+  cartItemActions: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    marginBottom: 12,
+  },
+  quantityButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityButtonText: {
+    fontSize: 18,
+    color: '#666',
+    fontWeight: 'bold',
+  },
+  quantity: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginHorizontal: 12,
+    minWidth: 20,
+    textAlign: 'center',
+  },
+  deleteButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    fontSize: 18,
+  },
+  orderInfo: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  orderInfoTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  orderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  orderLabel: {
+    fontSize: 16,
+    color: '#666',
+  },
+  orderValue: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  orderLabelBold: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  orderValueBold: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  checkoutButton: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  checkoutText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
